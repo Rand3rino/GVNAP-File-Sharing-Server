@@ -37,7 +37,7 @@ entryCommand = Entry(gui)
 entryCommand.grid(row=6,column=1)
 
 # Listbox for speed selection
-listboxSpeed = Listbox(gui)
+listboxSpeed = Listbox(gui, height=4)
 listboxSpeed.insert(1, 'Modem')
 listboxSpeed.insert(2, 'Ethernet')
 listboxSpeed.insert(3, 'T1')
