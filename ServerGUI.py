@@ -26,13 +26,13 @@ entryHostname.grid(row=1,column=3)
 # Label for middle section
 Label(gui, text = 'Keyword').grid(row=4)
 entryKeyword = Entry(gui)
-entryKeyword.grid(row=4,column=1)
+entryKeyword.grid(row=4,column=1,pady=15)
 
 
 #Label for last section
 Label(gui, text = 'Enter Command').grid(row=6)
 entryCommand = Entry(gui)
-entryCommand.grid(row=6,column=1)
+entryCommand.grid(row=6,column=1,pady=15)
 
 # Listbox for speed selection
 listboxSpeed = Listbox(gui, height=4)
