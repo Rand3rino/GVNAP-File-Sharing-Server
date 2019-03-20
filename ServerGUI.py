@@ -5,8 +5,6 @@ gui = Tk()
 # Window Title
 gui.title('GV-NAPSTER Host')
 
-
-
 # Labels for first section
 Label(gui, text = 'Server Hostname').grid(row=0)
 Label(gui, text = 'Username').grid(row=1)
