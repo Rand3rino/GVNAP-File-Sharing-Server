@@ -4,23 +4,10 @@
 
 #Python NAP Server
 import socket               # Import socket module
+import _thread
+#from multiprocessing import Process # Import multiprocessing module
 
-#stores hostname key to username, port, connection speed
-users = {}
-#stores filename key to hostname, file desc
-files = {}
-
-s = socket.socket()         # Create a socket object
-#host = socket.gethostname() # Get local machine name
-#print(host)
-#s.bind((host, 2004))        # Bind to the port
-s.bind(('localhost', 2121))        # Bind to the port
-s.listen(4)
-
-while True:
-	print("Waiting for connection...")
-	conn, addr = s.accept()
-	print("Got connection from:", addr)	
+def commandParser(conn, addr):
 	while True:
 		command = conn.recv(1024).decode()
 		split = command.split()
@@ -64,3 +51,27 @@ while True:
 			conn.close()
 			break
 	print("Quit connection with:", addr)
+
+
+#stores hostname key to username, port, connection speed
+users = {}
+#stores filename key to hostname, file desc
+files = {}
+
+
+s = socket.socket()         # Create a socket object
+#host = socket.gethostname() # Get local machine name
+#print(host)
+#s.bind((host, 2004))        # Bind to the port
+s.bind(('localhost', 2121))        # Bind to the port
+s.listen(4)
+
+while True:
+	print("Waiting for connection...")
+	conn, addr = s.accept()
+	print("Got connection from:", addr)	
+	_thread.start_new_thread(commandParser, (conn, addr))
+#	P = Process(target=commandParser, args=(conn, addr)); # jump to function
+#	P.start(); # start process
+#	P.join();  # join process to server
+s.close
