@@ -39,9 +39,9 @@ while True:
 		break
 	else:
 		sock.send(command.encode())
-		num = (sock.recv(1024).decode())
-		print(num)
-		for i in range(int(num)):
-			print(i)
-			print(sock.recv(1024).decode())
+		#num = (sock.recv(1024).decode())
+		#print(num)
+		#for i in range(int(num)):
+		#	print(i)
+		print(sock.recv(1024).decode())
 

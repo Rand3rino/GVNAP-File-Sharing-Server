@@ -9,9 +9,9 @@ import pickle
 #from multiprocessing import Process # Import multiprocessing module
 
 #stores hostname key to username, port, connection speed
-users = {}
+global users, files# = {}
 #stores filename key to hostname, file desc
-files = {}
+#files = {}
 
 s = socket.socket()         # Create a socket object
 #host = socket.gethostname() # Get local machine name
@@ -38,52 +38,54 @@ def commandParser(conn, addr,s):
 			
 		#make multi word desc work
 		elif split[0] == "UPLOAD":
-			# Send to client the number of data rows
-			conn.send(str(1).encode())
-			conn.send(b'File indexed in files table')
-
 			files[split[1]] = [addr[0], str(addr[1]), split[2]]
 			print("File indexed in files table")
 			print(files[split[1]])
-
+			message = "File indexed in Files table"
+			conn.send(message.encode())
 
 		elif split[0] == "SEARCH":
 
 			print(split[1])
 			if split[1] in files:
 				# Send to client the number of data rows
-				conn.send(str(1).encode())
+				# conn.send(str(1).encode())
 				print((' '.join(files[split[1]]) + ' ' + ' '.join(users[files[split[1]][0]])))
 				conn.send((' '.join(files[split[1]]) + ' ' + ' '.join(users[files[split[1]][0]])).encode())
 			else:
-				conn.send(str(0).encode())
+				message = "No Matching Records"
+				conn.send(message.encode())
 		elif split[0] == "TABLES":
 			
 			# Send to client the number of data rows
-			num = len(users) + len(files) + 2
-			conn.send(str(num).encode())
+			#num = len(users) + 1#len(files) + 2
+			#conn.send(str(num).encode())
 
 			# Send the users table
-			conn.send(b'Users')
+			#conn.send(b'Users\n')
+			message = "Users\n"
 			for k in users:
 				print("Key: ",k)
 				print("Value: ", users[k])
-				user = ' '.join(users[k])
-				conn.send(user.encode())
-				
+				#user = ' '.join(users[k])
+				message = message + ' '.join(users[k])
+			
+			message = message + "\nFiles\n"
 			# Send the files table
-			conn.send(b'Files')
+			#conn.send(b'Files')
 			for k in files:				
 				print("Key: ",k)
 				print("Value: ", files[k])
-				files = ' '.join(files[k])
-				conn.send(files.encode())
+				message = message + ' '.join(files[k])
+			#	files = ' '.join(files[k])
+			#	conn.send(files.encode())
+			conn.send(message.encode())
 
 		elif split[0] == "LOGOUT": #QUIT
 
 			# Send to client the number of data rows
-			conn.send(str(1).encode())
-			conn.send(b'Files deleted from files table\nUser deleted from users table')
+			message = "Files deleted from files table\nUser deleted from users table"
+			conn.send(message.encode())
 
 			#delete info from tables
 			for file in files:
@@ -95,13 +97,15 @@ def commandParser(conn, addr,s):
 			conn.close()
 			break
 		elif split[0] == "STOP":
+			message = "Server Shutting Down"
+			conn.send(message.encode())
 			exit()
 			#conn.close() or quit()
 		#invalid command
 		else:
 			# Send to client the number of data rows
-			conn.send(str(1).encode())
-			conn.send(b'Bad Command')
+			message = "Bad Command"
+			conn.send(message.encode())
 			#print("Bad command")
 			conn.close()
 			break
