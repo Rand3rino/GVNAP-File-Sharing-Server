@@ -4,14 +4,14 @@
 
 #Python NAP Server
 import socket               # Import socket module
-import _thread
-import pickle
+import _thread				# Import thread module
+
 #from multiprocessing import Process # Import multiprocessing module
 
 #stores hostname key to username, port, connection speed
-global users, files# = {}
+users = {}
 #stores filename key to hostname, file desc
-#files = {}
+files = {}
 
 s = socket.socket()         # Create a socket object
 #host = socket.gethostname() # Get local machine name
@@ -32,43 +32,37 @@ def commandParser(conn, addr,s):
 			# Send to client the number of data rows
 			#conn.send(str(1).encode())
 			#conn.send(b'User indexed in users table')
-			users[addr[0]] = [split[3], str(addr[0]), str(addr[1]), split[4]]
+			users[addr[1]] = [split[3], str(addr[0]), str(addr[1]), split[4]]
 			print("User indexed in users table")
-			print(users[addr[0]])
+			print(users[addr[1]])
 			
 		#make multi word desc work
 		elif split[0] == "UPLOAD":
-			files[split[1]] = [addr[0], str(addr[1]), split[2]]
+
+			# Store IP, Port Num, File Name, File Description
+			files[split[2]] = [addr[0], str(addr[1]), split[1], split[2]]
 			print("File indexed in files table")
-			print(files[split[1]])
+			print(files[split[2]])
+
 			message = "File indexed in Files table"
 			conn.send(message.encode())
 
 		elif split[0] == "SEARCH":
-
-			print(split[1])
+			#print(split[1])
 			if split[1] in files:
-				# Send to client the number of data rows
-				# conn.send(str(1).encode())
-				print((' '.join(files[split[1]]) + ' ' + ' '.join(users[files[split[1]][0]])))
-				conn.send((' '.join(files[split[1]]) + ' ' + ' '.join(users[files[split[1]][0]])).encode())
+				message = ' '.join(files[split[1]])
+				conn.send(message.encode())
 			else:
 				message = "No Matching Records"
 				conn.send(message.encode())
 		elif split[0] == "TABLES":
 			
-			# Send to client the number of data rows
-			#num = len(users) + 1#len(files) + 2
-			#conn.send(str(num).encode())
-
 			# Send the users table
-			#conn.send(b'Users\n')
 			message = "Users\n"
 			for k in users:
 				print("Key: ",k)
 				print("Value: ", users[k])
-				#user = ' '.join(users[k])
-				message = message + ' '.join(users[k])
+				message = message + ' '.join(users[k]) + "\n"
 			
 			message = message + "\nFiles\n"
 			# Send the files table
@@ -76,7 +70,7 @@ def commandParser(conn, addr,s):
 			for k in files:				
 				print("Key: ",k)
 				print("Value: ", files[k])
-				message = message + ' '.join(files[k])
+				message = message + ' '.join(files[k]) + "\n"
 			#	files = ' '.join(files[k])
 			#	conn.send(files.encode())
 			conn.send(message.encode())
@@ -101,6 +95,7 @@ def commandParser(conn, addr,s):
 			conn.send(message.encode())
 			exit()
 			#conn.close() or quit()
+
 		#invalid command
 		else:
 			# Send to client the number of data rows
@@ -117,7 +112,4 @@ while True:
 	conn, addr = s.accept()
 	print("Got connection from:", addr)	
 	_thread.start_new_thread(commandParser, (conn, addr,s))
-#	P = Process(target=commandParser, args=(conn, addr)); # jump to function
-#	P.start(); # start process
-#	P.join();  # join process to server
 s.close
