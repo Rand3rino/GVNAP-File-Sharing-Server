@@ -80,13 +80,16 @@ def commandParser(conn, addr,s):
 			# Send to client the number of data rows
 			message = "Files deleted from files table\nUser deleted from users table"
 			conn.send(message.encode())
-
+			print(users[addr[1]][2])
 			#delete info from tables
-			for file in files:
-				if users[addr[0]][0] == file[0]:
-					del file
+			for file in list(files):
+				print(files[file][1])
+				#if users[addr[0]][0] == file[0]:
+				if users[addr[1]][2] == files[file][1]:
+					del files[file]
+					print("Delete File")
 			#print("Files deleted from files table")
-			del users[addr[0]]
+			del users[addr[1]]
 			#print("User deleted from users table")
 			conn.close()
 			break
