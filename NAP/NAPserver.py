@@ -32,15 +32,15 @@ def commandParser(conn, addr,s):
 			# Send to client the number of data rows
 			#conn.send(str(1).encode())
 			#conn.send(b'User indexed in users table')
-			users[addr[1]] = [split[3], str(addr[0]), str(addr[1]), split[4]]
+			users[addr[1]] = [split[3], str(addr[0]), str(addr[1]), split[4], split[5]]
 			print("User indexed in users table")
 			print(users[addr[1]])
 			
 		#make multi word desc work
 		elif split[0] == "UPLOAD":
 
-			# Store IP, Port Num, File Name, File Description
-			files[split[2]] = [addr[0], str(addr[1]), split[1], split[2]]
+			# Store IP, Port Num, File Name, File Description, Ftpserver port
+			files[split[2]] = [addr[0], str(addr[1]), split[1], split[2], split[3]]
 			print("File indexed in files table")
 			print(files[split[2]])
 
